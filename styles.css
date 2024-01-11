@@ -1,0 +1,21 @@
+body {
+  background-color: green;
+}
+
+.card-container {
+  display: flex;
+  justify-content: start;
+  margin: 20px;
+}
+
+.card {
+  width: 100px; /* Adjust the width as needed */
+  height: 150px; /* Adjust the height as needed */
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-right: 10px; /* Adjust the margin between cards */
+  box-sizing: border-box;
+}
+
+
