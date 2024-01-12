@@ -1,8 +1,8 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
   //declaramos nuestras variables para seleccionar boton e input
   const generateButton = document.querySelector('button');
-  const amountInput = document.querySelector('input');
+  const amountInput = document.querySelector('#amountInput');
   const sortInput = document.querySelector('#sort-btn');
   const cardsArray = [];
 
@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const amount = parseInt(amountInput.value);
 
     // nos aseguramos de cubrir edge cases en el input
-    if(!isNaN(amount) && amount > 0) {
+    if (!isNaN(amount) && amount > 0) {
+      cardsArray.length = 0;
       generateCards(amount);
       displayCards();
     } else {
@@ -20,7 +21,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  sortInput.addEventListener('click', sortCards)
+  sortInput.addEventListener('click', function () {
+    sortCards();
+  })
 
   //LOGICA
 
@@ -30,12 +33,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-    for(let i = 0 ; i < amount; i++) {
+    for (let i = 0; i < amount; i++) {
 
       //generamos un numero o letra al azar
       const randomNumber = Math.random() < 0.5  // esto genera una chance de 50% de true o false
-      ? Math.floor(Math.random() * 10) + 1 // numero random entre 1 y 10
-      : ['Q', 'J', 'K', 'A'][Math.floor(Math.random() * 4)]
+        ? Math.floor(Math.random() * 10) + 1 // numero random entre 1 y 10
+        : ['Q', 'J', 'K', 'A'][Math.floor(Math.random() * 4)]
 
 
 
@@ -52,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function displayCards(amount) {
 
-    let array = generateCards(amount);
+
 
     const cardContainer = document.createElement('div');
 
@@ -60,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
     cardContainer.classList.add('card-container');
 
     //loopeamos para crear las cartas dentro de este div.
-    for(let i = 0 ; i < array.length; i++) {
+    for (let i = 0; i < cardsArray.length; i++) {
 
       // cada card es su propio div
       const card = document.createElement('div');
@@ -69,15 +72,15 @@ document.addEventListener("DOMContentLoaded", function() {
       card.classList.add('card');
 
       const numeroCarta = document.createElement('p')
-      numeroCarta.innerHTML = array[i][0]
+      numeroCarta.innerHTML = cardsArray[i][0]
       numeroCarta.classList.add('numeroC')
 
       const pintaRandom1 = document.createElement('p');
-      pintaRandom1.innerHTML = array[i][1]
+      pintaRandom1.innerHTML = cardsArray[i][1]
       pintaRandom1.classList.add('pinta1')
 
       const pintaRandom2 = document.createElement('p')
-      pintaRandom2.innerHTML = array[i][1]
+      pintaRandom2.innerHTML = cardsArray[i][1]
       pintaRandom2.classList.add('pinta2')
 
 
@@ -85,19 +88,85 @@ document.addEventListener("DOMContentLoaded", function() {
       card.appendChild(numeroCarta);
       card.appendChild(pintaRandom2);
       cardContainer.appendChild(card);
-
-
-    }
-
-    function sortCards() {
-      let cardsUnsorted = generateCards(amount);
+      // le metemos el div del container al body
+      document.body.appendChild(cardContainer);
 
     }
+  }
+
+  //convertir letras a numero porque sino no funciona xd
+    function cardValueToNumber(cardValue) {
+      if (cardValue === 'A') {
+        return 1;
+      } else if (cardValue === 'J') {
+        return 11;
+      } else if (cardValue === 'Q') {
+        return 12;
+      } else if (cardValue === 'K') {
+        return 13;
+      } else {
+        return parseInt(cardValue, 10);
+      }
+    }
+
+  function sortCards() {
+    let cardsSorted = cardsArray.slice(); //copia de cardsArray
+    let step = 1;
+    for (let i = 0; i < cardsSorted.length - 1; i++) {
+      for (let j = 0; j < cardsSorted.length - 1; j++) {
+        if (cardValueToNumber(cardsSorted[j][0]) > cardValueToNumber(cardsSorted[j + 1][0])) {
+          let temp = cardsSorted[j];
+          cardsSorted[j] = cardsSorted[j + 1]
+          cardsSorted[j + 1] = temp;
+          setTimeout(displayCardsSorted, 0, cardsSorted.slice(), step++);
+        }
+      }
+    }
+  }
+
+  function displayCardsSorted(cardsSorted, step) {
+    const cardContainerSorted = document.createElement('div');
+
+    cardContainerSorted.classList.add('card-container');
 
 
-    // le metemos el div del container al body
-    document.body.appendChild(cardContainer);
-}
+    const title = document.createElement('p');
+    title.textContent = `Step ${step}`;
+    cardContainerSorted.appendChild(title);
+
+
+
+    //loopeamos para crear las cartas dentro de este div.
+    for (let i = 0; i < cardsSorted.length; i++) {
+
+      // cada card es su propio div
+      const card = document.createElement('div');
+
+      // agregamos la clase de card hecha en CSS para el styling
+      card.classList.add('card');
+
+      const numeroCarta = document.createElement('p')
+      numeroCarta.innerHTML = cardsSorted[i][0]
+      numeroCarta.classList.add('numeroC')
+
+      const pintaRandom1 = document.createElement('p');
+      pintaRandom1.innerHTML = cardsSorted[i][1]
+      pintaRandom1.classList.add('pinta1')
+
+      const pintaRandom2 = document.createElement('p')
+      pintaRandom2.innerHTML = cardsSorted[i][1]
+      pintaRandom2.classList.add('pinta2')
+
+
+      card.appendChild(pintaRandom1);
+      card.appendChild(numeroCarta);
+      card.appendChild(pintaRandom2);
+      cardContainerSorted.appendChild(card);
+
+    }
+    document.body.appendChild(cardContainerSorted)
+
+  }
 
 
 
